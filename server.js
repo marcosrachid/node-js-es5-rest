@@ -11,11 +11,19 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 app.use(multiparty());
 
+app.use(function(req, res, next){
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "content-type");
+    res.setHeader("Access-Control-Allow-Credentials", true);
+    next();
+});
+
 var port = 8080;
 app.listen(port);
 
 var db = mongodb.Db(
-  'instagram',
+  'api',
   new mongodb.Server('localhost', 27017, {}),
 
 );
@@ -23,9 +31,8 @@ var db = mongodb.Db(
 console.log('Servidor HTTP escutando na porta ' + port);
 
 app.get('/api', function(req, res){
-  res.setHeader("Access-Control-Allow-Origin", "*");
   db.open(function(err, mongoclient){
-    mongoclient.collection('postagens', function(err, collection){
+    mongoclient.collection('col', function(err, collection){
       collection.find().toArray(function(err, results){
         if(err){
           res.statusCode(500).send(err);
@@ -38,9 +45,8 @@ app.get('/api', function(req, res){
   });
 });
 app.get('/api/:id', function(req, res){
-  res.setHeader("Access-Control-Allow-Origin", "*");
   db.open(function(err, mongoclient){
-    mongoclient.collection('postagens', function(err, collection){
+    mongoclient.collection('col', function(err, collection){
       collection.find(objectID(req.params.id)).toArray(function(err, results){
         if(err){
           res.statusCode(500).send(err);
@@ -53,10 +59,9 @@ app.get('/api/:id', function(req, res){
   });
 });
 app.post('/api', function(req, res){
-  res.setHeader("Access-Control-Allow-Origin", "*");
   var dados = req.body;
   db.open(function(err, mongoclient){
-    mongoclient.collection('postagens', function(err, collection){
+    mongoclient.collection('col', function(err, collection){
       collection.insert(dados, function(err, records){
         if(err){
           res.statusCode(500).send(err);
@@ -69,10 +74,9 @@ app.post('/api', function(req, res){
   });
 });
 app.put('/api/:id', function(req, res){
-  res.setHeader("Access-Control-Allow-Origin", "*");
   var dados = req.body;
   db.open(function(err, mongoclient){
-    mongoclient.collection('postagens', function(err, collection){
+    mongoclient.collection('col', function(err, collection){
       collection.update(
         { _id : objectID(req.params.id) },
         { $set: dados },
@@ -90,9 +94,8 @@ app.put('/api/:id', function(req, res){
   });
 });
 app.delete('/api/:id', function(req, res){
-  res.setHeader("Access-Control-Allow-Origin", "*");
   db.open(function(err, mongoclient){
-    mongoclient.collection('postagens', function(err, collection){
+    mongoclient.collection('col', function(err, collection){
       collection.remove(
         { _id : objectID(req.params.id) },
         function(err, record){
