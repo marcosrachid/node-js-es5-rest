@@ -8,6 +8,7 @@ npm init
 npm install express --save
 npm install body-parser --save
 npm install mongodb --save
+npm install connect-multiparty --save
 npm install -g nodemon
 ```
 

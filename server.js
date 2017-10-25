@@ -1,6 +1,7 @@
 "use strict";
 var express = require('express');
 var bodyParser = require('body-parser');
+var multiparty = require('multiparty');
 var mongodb = require('mongodb');
 var objectID = mongodb.ObjectId;
 
@@ -8,6 +9,7 @@ var app = express();
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
+app.use(multiparty());
 
 var port = 8080;
 app.listen(port);
@@ -21,6 +23,7 @@ var db = mongodb.Db(
 console.log('Servidor HTTP escutando na porta ' + port);
 
 app.get('/api', function(req, res){
+  res.setHeader("Access-Control-Allow-Origin", "*");
   db.open(function(err, mongoclient){
     mongoclient.collection('postagens', function(err, collection){
       collection.find().toArray(function(err, results){
@@ -35,6 +38,7 @@ app.get('/api', function(req, res){
   });
 });
 app.get('/api/:id', function(req, res){
+  res.setHeader("Access-Control-Allow-Origin", "*");
   db.open(function(err, mongoclient){
     mongoclient.collection('postagens', function(err, collection){
       collection.find(objectID(req.params.id)).toArray(function(err, results){
@@ -49,6 +53,7 @@ app.get('/api/:id', function(req, res){
   });
 });
 app.post('/api', function(req, res){
+  res.setHeader("Access-Control-Allow-Origin", "*");
   var dados = req.body;
   db.open(function(err, mongoclient){
     mongoclient.collection('postagens', function(err, collection){
@@ -64,6 +69,7 @@ app.post('/api', function(req, res){
   });
 });
 app.put('/api/:id', function(req, res){
+  res.setHeader("Access-Control-Allow-Origin", "*");
   var dados = req.body;
   db.open(function(err, mongoclient){
     mongoclient.collection('postagens', function(err, collection){
@@ -84,6 +90,7 @@ app.put('/api/:id', function(req, res){
   });
 });
 app.delete('/api/:id', function(req, res){
+  res.setHeader("Access-Control-Allow-Origin", "*");
   db.open(function(err, mongoclient){
     mongoclient.collection('postagens', function(err, collection){
       collection.remove(
